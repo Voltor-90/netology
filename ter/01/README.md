@@ -9,24 +9,24 @@
     >"result": "MWVjSiUE9BvA7Kc9"
 4. Раскомментируйте блок кода, примерно расположенный на строчках 29–42 файла main.tf. Выполните команду terraform validate. Объясните, в чём заключаются намеренно допущенные ошибки. Исправьте их.
     >1) Обновлена версия docker провайдера: ~> 3.0.1 → ~> 3.5.0 (решило проблему с API)
-    >2) Отсутствовал провайдер random
-        Было: В required_providers был только docker
-        Стало: Добавлен random провайдер
-    >3) Не был объявлен провайдер random
-        Было: Только provider "docker" {}
-        Стало: Добавлен provider "random" {}
-    >4) Несовместимая версия Terraform
-        Было: required_version = "~>1.12.0" (требует 1.12.0-1.12.x)
-        Стало: required_version = ">=1.12.0" (любая версия от 1.12.0)
-    >5) Ресурс docker_image без имени
-        Было: resource "docker_image" { (нет имени)
-        Стало: resource "docker_image" "nginx" { (добавлено имя)
-    >6) Неправильное имя ресурса docker_container
-        Было: resource "docker_container" "1nginx" (начинается с цифры)
-        Стало: resource "docker_container" "nginx" (исправлено имя)
-    >7) Неправильная ссылка на ресурс в интерполяции
-        Было: random_password.random_string_FAKE.resulT
-        Стало: random_password.random_string.result
+    >2) Отсутствовал провайдер random  
+        Было: В required_providers был только docker  
+        Стало: Добавлен random провайдер  
+    >3) Не был объявлен провайдер random  
+        Было: Только provider "docker" {}  
+        Стало: Добавлен provider "random" {}  
+    >4) Несовместимая версия Terraform  
+        Было: required_version = "~>1.12.0" (требует 1.12.0-1.12.x)  
+        Стало: required_version = ">=1.12.0" (любая версия от 1.12.0)  
+    >5) Ресурс docker_image без имени  
+        Было: resource "docker_image" { (нет имени)  
+        Стало: resource "docker_image" "nginx" { (добавлено имя)  
+    >6) Неправильное имя ресурса docker_container  
+        Было: resource "docker_container" "1nginx" (начинается с цифры)  
+        Стало: resource "docker_container" "nginx" (исправлено имя)  
+    >7) Неправильная ссылка на ресурс в интерполяции  
+        Было: random_password.random_string_FAKE.resulT  
+        Стало: random_password.random_string.result  
     >8) Во время попыток решить проблемы, так же установил актуальную версию терраформ  
     ![Новая версия terraform](2.png)
 5. Выполните код. В качестве ответа приложите: исправленный фрагмент кода и вывод команды docker ps.  
