@@ -1,6 +1,8 @@
-1. Задача. https://hub.docker.com/repository/docker/rumotachimoshi/custom-nginx/general  
+1. Задача. Соберите и отправьте созданный образ в свой dockerhub-репозитории c tag 1.0.0  
+https://hub.docker.com/repository/docker/rumotachimoshi/custom-nginx/general  
   
-2. Задача. ![Задача 2](2.png)  
+2. Задача. В качестве ответа приложите скриншоты консоли, где видно все введенные команды и их вывод.  
+![Задача 2](2.png)  
   
 3. Задача.    
     1. Воспользуйтесь docker help или google, чтобы узнать как подключиться к стандартному потоку ввода/вывода/ошибок контейнера "custom-nginx-t2".  
