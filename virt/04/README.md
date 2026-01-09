@@ -89,4 +89,4 @@ fi
 ![alt text](6.0.7.png)  
   
 Задача 6.1  
-![alt text](6.1.1.png)
+![alt text](6.1.1.png)  
