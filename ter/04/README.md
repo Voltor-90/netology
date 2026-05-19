@@ -14,7 +14,7 @@ terraform console и предоставьте скриншот содержим�
 Задание 2.  
 ![alt text](8.png)  
 Сгенерированная документация  
-[text](src/vpc/README.md) 
+[README](src/vpc/README.md) 
   
 Задание 3.  
 ![alt text](9.png)  
