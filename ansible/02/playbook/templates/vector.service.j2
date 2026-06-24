@@ -1,0 +1,14 @@
+[Unit]
+Description=Vector
+After=network.target
+
+[Service]
+User=vector
+Group=vector
+
+ExecStart=/usr/local/bin/vector --config {{ vector_config_dir }}/vector.yaml
+
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

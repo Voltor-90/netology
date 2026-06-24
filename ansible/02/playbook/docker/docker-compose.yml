@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+
+  clickhouse:
+    build:
+      context: ./clickhouse
+    container_name: clickhouse
+    hostname: clickhouse
+    ports:
+    - "2222:22"
+
+  vector:
+    build:
+      context: ./ubuntu-host
+    container_name: vector
+    hostname: vector
+    ports:
+      - "2223:22"
+  lighthouse:
+    build:
+      context: ./ubuntu-host
+    container_name: lighthouse
+    hostname: lighthouse
+    ports:
+      - "2224:22"

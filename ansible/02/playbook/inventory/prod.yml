@@ -1,0 +1,27 @@
+---
+all:
+  children:
+
+    clickhouse:
+      hosts:
+        clickhouse-01:
+          ansible_host: 127.0.0.1
+          ansible_port: 2222
+
+    vector:
+      hosts:
+        vector-01:
+          ansible_host: 127.0.0.1
+          ansible_port: 2223
+
+    lighthouse:
+      hosts:
+        lighthouse-01:
+          ansible_host: 127.0.0.1
+          ansible_port: 2224
+
+  vars:
+    ansible_user: root
+    ansible_password: root
+    ansible_connection: ssh
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
