@@ -13,29 +13,29 @@ clickhouse-01	Сервер ClickHouse
 vector-01	    Сервер Vector
 lighthouse-01	Дополнительный хост
 
-Структура проекта
-.
-playbook/ 
-├── docker/ 
-│ ├── clickhouse/ 
-│ │ └── Dockerfile 
-│ ├── ubuntu-host/ 
-│ │ └── Dockerfile 
-│ ├── clickhouse_data/ 
-│ ├── vector_data/ 
-│ ├── vector_logs/ 
-│ └── docker-compose.yml 
-├── group_vars/ 
-│ ├── clickhouse/ 
-│ │ └── vars.yml 
-│ └── vector/ 
-│ └── vars.yml 
-├── inventory/ 
-│ └── prod.yml 
-├── templates/ 
-│ ├── vector.service.j2 
-│ └── vector.yml.j2 
-└── site.yml
+Структура проекта  
+.  
+playbook/  
+├── docker/  
+│ ├── clickhouse/  
+│ │ └── Dockerfile  
+│ ├── ubuntu-host/  
+│ │ └── Dockerfile  
+│ ├── clickhouse_data/  
+│ ├── vector_data/  
+│ ├── vector_logs/  
+│ └── docker-compose.yml  
+├── group_vars/  
+│ ├── clickhouse/  
+│ │ └── vars.yml  
+│ └── vector/  
+│ └── vars.yml  
+├── inventory/  
+│ └── prod.yml  
+├── templates/  
+│ ├── vector.service.j2  
+│ └── vector.yml.j2  
+└── site.yml  
 
 Возможности Playbook
 ClickHouse
