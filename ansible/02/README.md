@@ -1,125 +1,74 @@
-Домашнее задание к занятию «Ansible Playbook»
-Описание
+# Домашнее задание к занятию 2 «Работа с Playbook»
 
-В рамках задания был разработан Ansible Playbook для автоматизации установки и настройки сервисов:
+## Назначение
 
-ClickHouse
-Vector
+Playbook устанавливает ClickHouse на хост группы `clickhouse`, создаёт базу `logs`, затем устанавливает Vector на хост группы `vector`, разворачивает его конфигурацию и запускает systemd-службу. Vector получает тестовые события `demo_logs` и выводит их в консольный sink.
 
-Для тестирования использовалось Docker-окружение из трёх контейнеров:
+## Структура
 
-Хост	Назначение
-clickhouse-01	Сервер ClickHouse
-vector-01	    Сервер Vector
-lighthouse-01	Дополнительный хост
+- `playbook/site.yml` — два play для ClickHouse и Vector.
+- `playbook/inventory/prod.yml` — Docker-хосты `clickhouse-01` и `vector-01`.
+- `playbook/group_vars/clickhouse/vars.yml` — параметры ClickHouse.
+- `playbook/group_vars/vector/vars.yml` — параметры Vector.
+- `playbook/templates/vector.yaml.j2` — конфигурация Vector.
+- `playbook/templates/vector.service.j2` — systemd unit Vector.
 
-Структура проекта  
-.  
-playbook/  
-├── docker/  
-│ ├── clickhouse/  
-│ │ └── Dockerfile  
-│ ├── ubuntu-host/  
-│ │ └── Dockerfile  
-│ ├── clickhouse_data/  
-│ ├── vector_data/  
-│ ├── vector_logs/  
-│ └── docker-compose.yml  
-├── group_vars/  
-│ ├── clickhouse/  
-│ │ └── vars.yml  
-│ └── vector/  
-│ └── vars.yml  
-├── inventory/  
-│ └── prod.yml  
-├── templates/  
-│ ├── vector.service.j2  
-│ └── vector.yml.j2  
-└── site.yml  
+Для подключения используется `community.docker.docker`. Контейнеры в этой лабораторной запускаются на локальном Docker-хосте.
 
-Возможности Playbook
-ClickHouse
+## Переменные
 
-Playbook выполняет следующие действия:
+`group_vars/clickhouse/vars.yml`:
 
-скачивает RPM-пакеты ClickHouse;
-устанавливает ClickHouse;
-создаёт базу данных logs;
-удаляет временные RPM-файлы после установки.
-Vector
+- `clickhouse_version` — версия ClickHouse (`22.3.3.44`).
+- `clickhouse_packages` — устанавливаемые RPM-пакеты.
 
-Playbook выполняет следующие действия:
+`group_vars/vector/vars.yml`:
 
-создаёт системного пользователя Vector;
-создаёт необходимые каталоги;
-скачивает архив Vector;
-распаковывает архив;
-устанавливает бинарный файл Vector;
-размещает конфигурационный файл;
-размещает unit-файл сервиса.
-Используемые переменные
-ClickHouse
-Переменная	        Описание
-clickhouse_version	Версия ClickHouse
-clickhouse_packages	Список устанавливаемых пакетов
-Vector
-Переменная	        Описание
-vector_version	    Версия Vector
-vector_arch	        Архитектура пакета
-Инвентарь
+- `vector_version` — версия Vector (`0.61.0`).
+- `vector_arch` — целевая архитектура архива (`x86_64-unknown-linux-musl`).
+- `vector_download_url` — URL архива Vector, формируемый из версии и архитектуры.
+- `vector_data_dir` — каталог данных Vector.
 
-Файл:
+## Запуск и проверка
 
-inventory/prod.yml
+Из каталога `playbook/`:
 
-Пример запуска:
-
-ansible-playbook -i inventory/prod.yml site.yml
-Проверка синтаксиса
-
-Проверка playbook выполняется командой:
-
+```bash
 ansible-lint site.yml
+ansible-playbook --syntax-check -i inventory/prod.yml site.yml
+ansible-playbook -i inventory/prod.yml site.yml --check
+ansible-playbook -i inventory/prod.yml site.yml --check --diff
+ansible-playbook -i inventory/prod.yml site.yml --diff
+```
 
-Результат:
+Первый обычный запуск устанавливает компоненты и создаёт базу `logs`. Повторный запуск с `--diff` должен быть идемпотентным: `changed=0` на обоих хостах.
 
-![alt text](5.png)
+В `--check` ожидаемы пропуски задач загрузки, распаковки и запуска служб: они намеренно не выполняют установку в режиме проверки. Ansible также может предупредить, что группа `vector` ещё не создана: check mode только моделирует создание системной группы и не применяет её.
 
-Проверка режима Check
+## Теги
 
-Команда:
+- `clickhouse` — выполнить play установки ClickHouse.
+- `vector` — выполнить play установки Vector.
 
-![alt text](6.1.png)  
-![alt text](6.2.png)  
+Примеры выборочного запуска:
 
-При выполнении playbook с параметром --check задача установки ClickHouse завершается ошибкой:
+```bash
+ansible-playbook -i inventory/prod.yml site.yml --tags clickhouse
+ansible-playbook -i inventory/prod.yml site.yml --tags vector
+```
 
-OSError: Could not open: /tmp/clickhouse-common-static-22.3.3.44.rpm ...
+## Результаты и скриншоты
 
-Причина заключается в особенностях режима проверки Ansible. В режиме --check модуль get_url не скачивает RPM-пакеты фактически, а только сообщает о предполагаемых изменениях. Следующая задача установки пакетов пытается использовать файлы, которые отсутствуют в файловой системе, что приводит к ошибке.
+5. Проверка `ansible-lint site.yml`: [5.png](5.png).
 
-Данное поведение является ожидаемым для режима проверки и связано с зависимостью между задачами скачивания и установки пакетов.
-Для проверки идемпотентности Vector дополнительно использовалась команда:
+6. Режим проверки: [6.1.png](6.1.png), [6.2.png](6.2.png).
 
-Проверка изменений
+7. Первый запуск с `--diff`: ClickHouse — [7.1.png](7.1.png), Vector и итоговый recap — [7.2.png](7.2.png).
 
-Команда:
+8. Повторный запуск с `--diff`: `changed=0`, `failed=0` для обоих хостов — [8.1.png](8.1.png).
 
-![alt text](7.1.png)  
-![alt text](7.2.png)  
+## Примечания
 
-Режим --diff позволяет просмотреть изменения, которые вносит playbook.
-
-![alt text](7.3.png)  
-![alt text](7.4.png)  
-
-Проверка идемпотентности
-
-Повторный запуск:
-
-![alt text](8.1.png)  
-![alt text](8.2.png)  
-
-Для роли Vector повторный запуск не приводит к изменениям, что подтверждает идемпотентность playbook.
-
-ClickHouse скачивает RPM-пакеты во временный каталог /tmp и удаляются после установки. Поэтому при повторном запуске выполняется повторное скачивание пакетов, что отражается в количестве изменений.
+- Контейнеры `clickhouse-01` и `vector-01` должны быть запущены до запуска playbook; для systemd в контейнерах используется образ с systemd.
+- Установка ClickHouse использует официальные RPM-файлы по HTTPS. Для установки локальных RPM в учебном playbook отключена проверка GPG-подписи (`disable_gpg_check: true`); не переносить эту настройку в production без проверки доверенной цепочки пакетов.
+- Финальный коммит задания помечен тегом `08-ansible-02-playbook`; публикация выполняется по очереди вместе с заданиями 01 и 03.

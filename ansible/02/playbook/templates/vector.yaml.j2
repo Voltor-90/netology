@@ -1,13 +1,16 @@
-# Managed by Ansible
+data_dir: "{{ vector_data_dir }}"
 
-data_dir = "/var/lib/vector"
+sources:
+  demo_logs:
+    type: demo_logs
+    format: json
+    interval: 1.0
 
-[sources.demo_logs]
-type = "demo_logs"
-
-[sinks.console]
-type = "console"
-inputs = ["demo_logs"]
-
-[sinks.console.encoding]
-codec = "json"
+sinks:
+  console:
+    type: console
+    inputs:
+      - demo_logs
+    target: stdout
+    encoding:
+      codec: json
