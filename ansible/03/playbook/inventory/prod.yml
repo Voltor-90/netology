@@ -1,0 +1,22 @@
+---
+# Public IPv4s of the current lab VMs (Yandex Cloud, 2026-11-07).
+all:
+  vars:
+    ansible_user: yc-user
+    ansible_ssh_private_key_file: ~/.ssh/id_ed25519
+    ansible_python_interpreter: /usr/bin/python3
+    ansible_ssh_common_args: "-o IPQoS=none"
+    ansible_ssh_retries: 10
+  children:
+    clickhouse:
+      hosts:
+        clickhouse-01:
+          ansible_host: 51.250.78.191
+    vector:
+      hosts:
+        vector-01:
+          ansible_host: 93.77.163.225
+    lighthouse:
+      hosts:
+        lighthouse-01:
+          ansible_host: 81.26.177.230

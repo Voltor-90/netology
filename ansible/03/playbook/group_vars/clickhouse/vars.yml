@@ -1,0 +1,7 @@
+---
+clickhouse_repository_channel: stable
+clickhouse_repository_key_url: https://packages.clickhouse.com/rpm/lts/repodata/repomd.xml.key
+clickhouse_packages:
+  - clickhouse-server
+  - clickhouse-client
+clickhouse_database: logs
