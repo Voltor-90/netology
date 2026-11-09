@@ -1,45 +1,54 @@
-# Netology MNT 08 — Ansible roles
+# Netology MNT 08 — роли Ansible
 
-This directory is organized as three repository-ready projects required by the assignment:
+В этом каталоге находится playbook, который применяет роли ClickHouse, Vector и LightHouse.
 
-- `../vector-role/` — reusable Vector role.
-- `../lighthouse-role/` — reusable LightHouse role.
-- `./` — playbook and pinned role requirements.
+## Как устроено решение
 
-The ClickHouse role is consumed from `AlexeySetevoi/ansible-clickhouse` at version `1.13`; only the database-creation task remains in this playbook because it is specific to this deployment. Vector and LightHouse are separate roles, each configuring one product. LightHouse deploys its own Nginx configuration and does not depend on the Vector or ClickHouse roles.
+- ClickHouse устанавливается готовой ролью `AlexeySetevoi/ansible-clickhouse` версии `1.13`. После неё отдельная задача создаёт базу `logs` — это настройка именно этого проекта.
+- Vector настраивается отдельной ролью `vector`.
+- LightHouse настраивается отдельной ролью `lighthouse`; эта роль также ставит Nginx и настраивает сайт. Ролям Vector и ClickHouse она не зависит.
+- Настройки хостов и компонентов находятся в `inventory/prod.yml` и `group_vars/`.
+- Зависимости и версии ролей перечислены в `requirements.yml`.
 
-## Install and run
+## Установка и запуск
 
-The two role repositories and their `1.0.0` tags are published. Install and run:
+Зависимости закреплены на опубликованных версиях. Чтобы скачать их и запустить playbook:
 
 ```sh
 ansible-galaxy role install -r requirements.yml -p roles
 ansible-playbook site.yml
 ```
 
-Update the TEST-NET addresses in `inventory/prod.yml` before connecting to recreated hosts. The current sample addresses (`192.0.2.10`–`.12`) are documentation-only and are not reachable targets.
+Перед запуском на реальных серверах замените тестовые адреса в `inventory/prod.yml` на действительные IP-адреса. Адреса `192.0.2.10`–`192.0.2.12` зарезервированы для документации и не являются адресами ваших ВМ.
 
-## Tags
+## Теги
 
-- `clickhouse` — upstream ClickHouse role and database creation.
-- `database` — only the ClickHouse database task.
-- `vector` — Vector role.
-- `lighthouse` — LightHouse role.
+- `clickhouse` — установка ClickHouse и создание базы данных.
+- `database` — только задача создания базы данных ClickHouse.
+- `vector` — установка и настройка Vector.
+- `lighthouse` — установка и настройка LightHouse.
 
-Example: `ansible-playbook site.yml --tags lighthouse`.
+Например, чтобы применить только LightHouse:
 
-## Assignment answers / deliverables
+```sh
+ansible-playbook site.yml --tags lighthouse
+```
 
-1. Requirements include ClickHouse `1.13` and both project roles pinned at semantic version `1.0.0`.
-2. Created Vector and LightHouse role skeletons with `ansible-galaxy role init`; role tasks, defaults, internal vars, handlers, templates, and documentation are filled in.
-3. Playbook uses roles, role/task tags, and a separate deployment-specific task after ClickHouse role.
-4. Published repository links:
-   - Vector role (`1.0.0`): https://github.com/Voltor-90/vector-role/tree/1.0.0
-   - LightHouse role (`1.0.0`): https://github.com/Voltor-90/lighthouse-role/tree/1.0.0
+## Ответы по заданию и ссылки
+
+1. Зависимости включают роль ClickHouse версии `1.13` и опубликованные роли Vector и LightHouse, закреплённые на версии `1.0.1`.
+2. Роли созданы через `ansible-galaxy role init`; у каждой есть задачи, значения по умолчанию, внутренние переменные, handlers, шаблоны и README.
+3. Playbook использует роли и теги. Задача создания базы данных ClickHouse размещена отдельно после роли.
+4. Репозитории:
+   - Vector (`1.0.1`): https://github.com/Voltor-90/vector-role/tree/1.0.1
+   - LightHouse (`1.0.1`): https://github.com/Voltor-90/lighthouse-role/tree/1.0.1
    - Playbook: https://github.com/Voltor-90/netology/tree/main/ansible/04/playbook
 
-The answer file for submission is `../README.md`.
+Файл ответа для отправки преподавателю: `../README.md`.
 
-## Validation status
+## Что проверено
 
-Inventory contains TEST-NET placeholders because the previous cloud VMs were deleted. Syntax and role-template checks can run locally; live installation, idempotence, and HTTP/service checks require recreated hosts.
+- Роли устанавливаются командой `ansible-galaxy role install -r requirements.yml -p roles`.
+- Синтаксис playbook проверен командой `ansible-playbook --syntax-check -i inventory/prod.yml site.yml`.
+- Линтер ролей завершился без ошибок и предупреждений.
+- Облачные ВМ удалены. Поэтому выполнение на серверах, повторный запуск для проверки идемпотентности и проверка HTTP/служб потребуют пересоздания ВМ и обновления inventory.

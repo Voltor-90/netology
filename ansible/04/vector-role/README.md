@@ -1,29 +1,29 @@
-# vector-role
+# Роль Vector для Ansible
 
-Ansible role to install Vector from its versioned archive, install a systemd unit, deploy its YAML configuration, and enable/start the service. Based on the Vector tasks and templates from the Netology MNT lesson 3 playbook.
+Эта роль устанавливает Vector из архива выбранной версии, настраивает службу systemd, размещает конфигурацию и запускает службу. Основа — задачи и шаблоны из предыдущего playbook Netology MNT.
 
-## Requirements
+## Требования
 
-- Ansible 2.14 or newer.
-- Ubuntu/Debian host with systemd and network access to the configured Vector archive.
-- Run with privilege escalation (`become: true`).
+- Ansible 2.14 или новее.
+- Целевая система Ubuntu или Debian с systemd и доступом к URL архива Vector.
+- Запуск с повышением привилегий: `become: true`.
 
-## Role variables
+## Переменные роли
 
-| Variable | Default | Purpose |
+| Переменная | Значение по умолчанию | Назначение |
 |---|---|---|
-| `vector_version` | `0.61.0` | Vector release. |
-| `vector_arch` | `x86_64-unknown-linux-musl` | Archive target architecture. |
-| `vector_download_url` | Derived from version and architecture | Archive URL; override for a mirror. |
-| `vector_data_dir` | `/var/lib/vector` | Vector state directory. |
-| `vector_config_dir` | `/etc/vector` | Configuration directory. |
-| `vector_install_dir` | `/opt/vector` | Extracted installation directory. |
-| `vector_service_user` / `vector_service_group` | `vector` | Dedicated service account. |
-| `vector_config` | Demo JSON logs to console | Complete Vector configuration mapping, rendered as YAML. |
+| `vector_version` | `0.61.0` | Версия Vector. |
+| `vector_arch` | `x86_64-unknown-linux-musl` | Архитектура сборки в архиве. |
+| `vector_download_url` | Формируется из версии и архитектуры | Ссылка на архив; можно заменить ссылкой на зеркало. |
+| `vector_data_dir` | `/var/lib/vector` | Каталог данных Vector. |
+| `vector_config_dir` | `/etc/vector` | Каталог конфигурации. |
+| `vector_install_dir` | `/opt/vector` | Каталог установки распакованного Vector. |
+| `vector_service_user` / `vector_service_group` | `vector` | Системный пользователь и группа службы. |
+| `vector_config` | Пример: источник тестовых JSON-логов и вывод в консоль | Полная конфигурация Vector в виде YAML-структуры. Роль преобразует её в YAML. |
 
-Internal paths (`vector_archive_path`, `vector_binary_path`, `vector_systemd_unit`) are defined in `vars/main.yml` and are not intended as user overrides.
+Служебные пути `vector_archive_path`, `vector_binary_path` и `vector_systemd_unit` задаются в `vars/main.yml`; обычно их не нужно переопределять.
 
-## Example
+## Пример использования
 
 ```yaml
 - hosts: vector
@@ -33,8 +33,8 @@ Internal paths (`vector_archive_path`, `vector_binary_path`, `vector_systemd_uni
       tags: [vector]
 ```
 
-Set any defaults in inventory/group vars or pass them under the role entry. The sample config is a demonstration pipeline; replace `vector_config` for production use.
+Переопределяйте значения по умолчанию в inventory, `group_vars` или непосредственно в параметрах роли. Встроенная конфигурация Vector — демонстрационная; для реального сбора логов задайте свою переменную `vector_config`.
 
-## License
+## Лицензия
 
 MIT

@@ -1,28 +1,29 @@
-# lighthouse-role
+# Роль LightHouse для Ansible
 
-Ansible role to install Nginx, deploy a pinned LightHouse static-site archive, configure a virtual host, and enable the site. Based on the LightHouse tasks and template from the Netology MNT lesson 3 playbook.
+Роль устанавливает Nginx и `unzip`, загружает закреплённую версию статических файлов LightHouse, настраивает сайт Nginx и включает его. Основа — задачи и шаблон из предыдущего playbook Netology MNT.
 
-## Requirements
+## Требования
 
-- Ansible 2.14 or newer.
-- Ubuntu/Debian host with systemd and network access to GitHub codeload.
-- Run with privilege escalation (`become: true`). The role installs Nginx and `unzip` itself.
+- Ansible 2.14 или новее.
+- Целевая система Ubuntu или Debian с systemd и доступом к GitHub codeload.
+- Запуск с повышением привилегий: `become: true`.
+- Роль сама устанавливает Nginx и `unzip`.
 
-## Role variables
+## Переменные роли
 
-| Variable | Default | Purpose |
+| Переменная | Значение по умолчанию | Назначение |
 |---|---|---|
-| `lighthouse_commit` | `d701335c25cd1bb9b5155711190bad8ab852c2ce` | Pinned upstream revision used for reproducible download. |
-| `lighthouse_archive_url` | Codeload URL for that commit | Archive URL; override to use a mirror. |
-| `lighthouse_listen_port` | `80` | Nginx HTTP port. |
-| `lighthouse_server_name` | `_` | Nginx server name. |
-| `lighthouse_web_root` | `/var/www/lighthouse-<commit>` | Document root. |
-| `lighthouse_site_name` | `lighthouse` | Nginx site file/link name. |
-| `lighthouse_packages` | `[nginx, unzip]` | Packages installed by this role. |
+| `lighthouse_commit` | `d701335c25cd1bb9b5155711190bad8ab852c2ce` | Зафиксированный commit LightHouse, чтобы загрузка была воспроизводимой. |
+| `lighthouse_archive_url` | Ссылка codeload для указанного commit | URL архива; можно заменить адресом зеркала. |
+| `lighthouse_listen_port` | `80` | Порт HTTP, на котором Nginx принимает запросы. |
+| `lighthouse_server_name` | `_` | Имя сайта в конфигурации Nginx. `_` означает сайт по умолчанию. |
+| `lighthouse_web_root` | `/var/www/lighthouse-<commit>` | Каталог со статическими файлами сайта. |
+| `lighthouse_site_name` | `lighthouse` | Имя файла в `sites-available` и ссылки в `sites-enabled`. |
+| `lighthouse_packages` | `[nginx, unzip]` | Системные пакеты, которые устанавливает роль. |
 
-Internal archive and Nginx directory paths in `vars/main.yml` are implementation details.
+Внутренние пути к архиву и каталогам Nginx находятся в `vars/main.yml`; обычно менять их не требуется.
 
-## Example
+## Пример использования
 
 ```yaml
 - hosts: lighthouse
@@ -32,10 +33,10 @@ Internal archive and Nginx directory paths in `vars/main.yml` are implementation
       tags: [lighthouse]
 ```
 
-## Dependencies
+## Зависимости
 
-No Ansible role dependencies. Nginx and `unzip` are installed by the role.
+Другие Ansible-роли не требуются. Nginx и `unzip` устанавливаются самой ролью.
 
-## License
+## Лицензия
 
 MIT

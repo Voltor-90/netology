@@ -1,24 +1,22 @@
-# MNT 08 — Работа с roles
+# Домашнее задание MNT 08 — «Работа с ролями Ansible»
 
-## Решение
+## Ссылки на решение
 
-- Vector role: https://github.com/Voltor-90/vector-role
-- LightHouse role: https://github.com/Voltor-90/lighthouse-role
+- Роль Vector, версия `1.0.1`: https://github.com/Voltor-90/vector-role/tree/1.0.1
+- Роль LightHouse, версия `1.0.1`: https://github.com/Voltor-90/lighthouse-role/tree/1.0.1
 - Playbook: https://github.com/Voltor-90/netology/tree/main/ansible/04/playbook
 
-Роли Vector и LightHouse опубликованы. Playbook и файл ответа находятся в этом репозитории и публикуются отдельным коммитом только из `ansible/04`, без включения незакоммиченных изменений в `03` и `ter/03`. ClickHouse использует upstream-роль `AlexeySetevoi/ansible-clickhouse` версии `1.13`; отдельная задача playbook создаёт deployment-specific базу данных.
+## Что сделано
 
-Теги ролей `1.0.0` указывают на коммиты Vector `c19476301022d9c0b4cbb488b8f875828593cb7e` и LightHouse `56967d2b82025a66bb7d1c8489acaf9d25180939`.
+Старый playbook разделён на роли: отдельная роль настраивает Vector, другая — LightHouse. Для ClickHouse используется готовая роль `AlexeySetevoi/ansible-clickhouse` версии `1.13`. После неё playbook отдельной задачей создаёт базу данных `logs`.
 
-## Проверка
+В каждой собственной роли есть задачи установки и настройки, обработчики перезапуска служб, шаблоны конфигураций и README на русском языке с описанием параметров и примером использования. Версии ролей опубликованы с семантическим тегом `1.0.1`; playbook устанавливает именно эти версии через `requirements.yml`.
 
-- `ansible-galaxy role install -r requirements.yml -p roles` — успешно установлены ClickHouse `1.13`, Vector `1.0.0`, LightHouse `1.0.0`.
-- `ansible-playbook --syntax-check -i inventory/prod.yml site.yml` — успешно.
-- `ansible-playbook --list-tags -i inventory/prod.yml site.yml` — теги ролей видны.
-- `ansible-lint ../vector-role ../lighthouse-role` — 0 ошибок и предупреждений.
-- Шаблоны Vector и Nginx LightHouse отрендерены; YAML Vector разобран успешно.
-- Целевые ВМ удалены; inventory использует TEST-NET адреса, поэтому запуск на хостах, идемпотентность и сервисные проверки требуют пересоздания ВМ.
+## Проверки
 
-## Публикация
+- Все три зависимости установлены через `ansible-galaxy role install -r requirements.yml -p roles`.
+- `ansible-playbook --syntax-check -i inventory/prod.yml site.yml` завершился успешно.
+- `ansible-lint` для ролей завершился без ошибок и предупреждений.
+- Шаблоны Vector и Nginx LightHouse отрендерены; получившийся YAML конфигурации Vector разобран без ошибок.
 
-Роли опубликованы в публичных репозиториях с тегами `1.0.0`. Playbook и этот файл ответа публикуются из `ansible/04` в `Voltor-90/netology`; существующие незакоммиченные изменения других заданий не включаются.
+Целевые облачные ВМ удалены. В inventory стоят специальные тестовые адреса, поэтому запуск на серверах, проверка идемпотентности и проверка работающих служб требуют пересоздания ВМ и замены адресов.
