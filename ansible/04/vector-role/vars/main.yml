@@ -1,0 +1,4 @@
+---
+vector_archive_path: "/tmp/vector-{{ vector_version }}-{{ vector_arch }}.tar.gz"
+vector_binary_path: "{{ vector_install_dir }}/vector-{{ vector_arch }}/bin/vector"
+vector_systemd_unit: /etc/systemd/system/vector.service

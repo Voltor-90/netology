@@ -1,0 +1,55 @@
+---
+- name: Install Nginx and unzip for LightHouse
+  ansible.builtin.apt:
+    name: "{{ lighthouse_packages }}"
+    state: present
+    update_cache: true
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+
+- name: Download pinned LightHouse static archive
+  ansible.builtin.get_url:
+    url: "{{ lighthouse_archive_url }}"
+    dest: "{{ lighthouse_archive_path }}"
+    mode: "0644"
+
+- name: Extract LightHouse static files
+  ansible.builtin.unarchive:
+    src: "{{ lighthouse_archive_path }}"
+    dest: /var/www
+    remote_src: true
+    creates: "{{ lighthouse_web_root }}/index.html"
+
+- name: Deploy Nginx LightHouse site configuration
+  ansible.builtin.template:
+    src: lighthouse.nginx.conf.j2
+    dest: "{{ lighthouse_nginx_sites_available }}/{{ lighthouse_site_name }}"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart Nginx
+
+- name: Enable LightHouse Nginx site
+  ansible.builtin.file:
+    src: "{{ lighthouse_nginx_sites_available }}/{{ lighthouse_site_name }}"
+    dest: "{{ lighthouse_nginx_sites_enabled }}/{{ lighthouse_site_name }}"
+    state: link
+  notify: Restart Nginx
+
+- name: Disable the default Nginx site
+  ansible.builtin.file:
+    path: "{{ lighthouse_nginx_sites_enabled }}/default"
+    state: absent
+  notify: Restart Nginx
+
+- name: Validate Nginx configuration
+  ansible.builtin.command:
+    cmd: nginx -t
+  changed_when: false
+
+- name: Ensure Nginx is enabled and started
+  ansible.builtin.systemd:
+    name: nginx
+    enabled: true
+    state: started
+    daemon_reload: true

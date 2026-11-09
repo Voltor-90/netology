@@ -1,0 +1,10 @@
+---
+lighthouse_commit: d701335c25cd1bb9b5155711190bad8ab852c2ce
+lighthouse_archive_url: "https://codeload.github.com/VKCOM/lighthouse/zip/{{ lighthouse_commit }}"
+lighthouse_listen_port: 80
+lighthouse_server_name: _
+lighthouse_web_root: "/var/www/lighthouse-{{ lighthouse_commit }}"
+lighthouse_site_name: lighthouse
+lighthouse_packages:
+  - nginx
+  - unzip

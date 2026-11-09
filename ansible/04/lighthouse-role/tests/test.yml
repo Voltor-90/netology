@@ -1,0 +1,6 @@
+---
+- name: Test LightHouse role
+  hosts: localhost
+  connection: local
+  roles:
+    - lighthouse-role

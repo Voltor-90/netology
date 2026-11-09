@@ -1,0 +1,28 @@
+---
+all:
+  vars:
+    ansible_user: yc-user
+    ansible_ssh_private_key_file: ~/.ssh/id_ed25519
+    ansible_python_interpreter: /usr/bin/python3
+    ansible_ssh_common_args: "-o IPQoS=none"
+    ansible_ssh_retries: 10
+  children:
+    clickhouse:
+      vars:
+        clickhouse_repository_channel: stable
+        clickhouse_repository_key_url: https://packages.clickhouse.com/rpm/lts/repodata/repomd.xml.key
+        clickhouse_packages:
+          - clickhouse-server
+          - clickhouse-client
+        clickhouse_database: logs
+      hosts:
+        clickhouse-01:
+          ansible_host: 192.0.2.10
+    vector:
+      hosts:
+        vector-01:
+          ansible_host: 192.0.2.11
+    lighthouse:
+      hosts:
+        lighthouse-01:
+          ansible_host: 192.0.2.12

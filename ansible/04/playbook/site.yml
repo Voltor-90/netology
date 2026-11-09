@@ -1,0 +1,27 @@
+---
+- name: Install ClickHouse role
+  hosts: clickhouse
+  become: true
+  roles:
+    - role: clickhouse
+      tags: [clickhouse]
+  tasks:
+    - name: Ensure logs database exists
+      ansible.builtin.command:
+        cmd: "clickhouse-client --query 'CREATE DATABASE IF NOT EXISTS {{ clickhouse_database }}'"
+      changed_when: false
+      tags: [clickhouse, database]
+
+- name: Install and configure Vector
+  hosts: vector
+  become: true
+  roles:
+    - role: vector
+      tags: [vector]
+
+- name: Install and configure LightHouse
+  hosts: lighthouse
+  become: true
+  roles:
+    - role: lighthouse
+      tags: [lighthouse]

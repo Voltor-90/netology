@@ -1,0 +1,4 @@
+---
+lighthouse_archive_path: "/tmp/lighthouse-{{ lighthouse_commit }}.zip"
+lighthouse_nginx_sites_available: /etc/nginx/sites-available
+lighthouse_nginx_sites_enabled: /etc/nginx/sites-enabled
